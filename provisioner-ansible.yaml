@@ -14,7 +14,7 @@
       ignore_errors: true
       changed_when: "'Complete!' in ssm_install_output.stdout"
 
-    - name: Download CloudWatch Agent ubuntu package
+    - name: Download CloudWatch Agent Ubuntu package
       get_url:
         url: "https://amazoncloudwatch-agent.s3.amazonaws.com/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb"
         dest: "/tmp/amazon-cloudwatch-agent.deb"
@@ -22,11 +22,16 @@
       register: cw_download_output
       ignore_errors: true
 
+    - name: Fail if CloudWatch Agent package download failed
+      fail:
+        msg: "Failed to download CloudWatch Agent package"
+      when: cw_download_output|failed
+
     - name: Install CloudWatch Agent package
       yum:
         name: "/tmp/amazon-cloudwatch-agent.deb"
         state: present
-      when: not cw_download_output.failed
+      when: cw_download_output|success and cw_download_output.stat.exists
 
     - name: Show CloudWatch installation output
       debug:
@@ -37,7 +42,7 @@
         name: amazon-cloudwatch-agent
         state: started
         enabled: yes
-      when: not cw_download_output.failed
+      when: cw_download_output|success and cw_download_output.stat.exists
 
     - name: Installing Amazon Inspector
       shell: |
