@@ -16,7 +16,7 @@
 
     - name: Install CloudWatch Agent
       package:
-        name: "https://s3.amazonaws.com/amazoncloudwatch-agent/amazon_linux/amd64/latest/amazon-cloudwatch-agent.deb"
+        name: "https://amazoncloudwatch-agent.s3.amazonaws.com/debian/amd64/latest/amazon-cloudwatch-agent.deb"
         state: present
       register: cw_install_output
       ignore_errors: true
@@ -35,5 +35,5 @@
 
     - name: Installing Docker
       package:
-        name: docker.io
+        name: docker
         state: present
