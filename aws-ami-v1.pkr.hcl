@@ -21,3 +21,27 @@ source "amazon-ebs" "amazon-linux" {
                       "ap-southeast-2"
                     ]
 }
+# what to install, configure and file to copy/execute
+
+build {
+  name = "hq-packer"
+  sources = [
+    "source.amazon-ebs.amazon-linux"
+  ]
+
+  provisioner "ansible" {
+    playbook_file = "provisioner.yml"
+  }
+
+  provisioner "shell" {
+    inline = [ "ls -la /tmp"]
+  }
+  
+  provisioner "shell" {
+    inline = [ "pwd"]
+  }
+  
+  provisioner "shell" {
+    inline = [ "cat /tmp/provisioner.yml"]
+  }
+}
