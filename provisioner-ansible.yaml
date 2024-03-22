@@ -9,14 +9,14 @@
         state: present
 
     - name: Installing Amazon SSM Agent
-      shell: sudo apt-get install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
+      shell: sudo yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
       register: ssm_install_output
       ignore_errors: true
       changed_when: "'Complete!' in ssm_install_output.stdout"
 
     - name: Install CloudWatch Agent
       shell: |
-        sudo apt-get install -y https://s3.amazonaws.com/amazoncloudwatch-agent/amazon_linux/amd64/latest/amazon-cloudwatch-agent.deb &&
+        sudo yum install -y https://s3.amazonaws.com/amazoncloudwatch-agent/amazon_linux/amd64/latest/amazon-cloudwatch-agent.deb &&
         sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -m ec2 -a start &&
         sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -m ec2 -a status
       register: cw_install_output
