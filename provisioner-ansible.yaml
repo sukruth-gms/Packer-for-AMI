@@ -14,16 +14,31 @@
       ignore_errors: true
       changed_when: "'Complete!' in ssm_install_output.stdout"
 
-    - name: Install CloudWatch Agent
-      package:
-        name: "https://amazoncloudwatch-agent.s3.amazonaws.com/debian/amd64/latest/amazon-cloudwatch-agent.deb"
-        state: present
+    - name: Download CloudWatch Agent DEB package
+      get_url:
+        url: "https://amazoncloudwatch-agent.s3.amazonaws.com/debian/amd64/latest/amazon-cloudwatch-agent.deb"
+        dest: "/tmp/amazon-cloudwatch-agent.deb"
+        mode: '0644'
+      register: cw_download_output
+      ignore_errors: true
+
+    - name: Install CloudWatch Agent package
+      shell: dpkg -i /tmp/amazon-cloudwatch-agent.deb
+      args:
+        creates: /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent
       register: cw_install_output
       ignore_errors: true
 
     - name: Show CloudWatch installation output
       debug:
         var: cw_install_output
+
+    - name: Start and enable CloudWatch Agent
+      service:
+        name: amazon-cloudwatch-agent
+        state: started
+        enabled: yes
+      when: cw_install_output|success
 
     - name: Installing Amazon Inspector
       shell: |
