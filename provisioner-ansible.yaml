@@ -1,36 +1,36 @@
 ---
-name: Installing the provisioner required
-hosts: all
-become: yes
-tasks:
-  - name: Installing Git
-    package:
-       name: git
-       state: present
-       
-  - name: Installing Amazon SSM Agent
-    shell: sudo apt-get install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
-    register: ssm_install_output
-    ignore_errors: true
-    changed_when: "'Complete!' in ssm_install_output.stdout"
-    
-  - name: Install CloudWatch Agent
-    shell: |
-      sudo apt-get install -y https://s3.amazonaws.com/amazoncloudwatch-agent/amazon_linux/amd64/latest/amazon-cloudwatch-agent.deb &&
-      sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -m ec2 -a start &&
-      sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -m ec2 -a status
-    register: cw_install_output
-    changed_when: "'Complete!' in cw_install_output.stdout"
-    
-  - name: Installing Amazon Inspector
-    shell: |
-      curl -O https://inspector-agent.amazonaws.com/linux/latest/install &&
-      sudo bash install
-    register: inspector_install_output
-    ignore_errors: true
-    changed_when: "'Complete!' in inspector_install_output.stdout"
+- name: Installing the provisioner required
+  hosts: all
+  become: yes
+  tasks:
+    - name: Installing Git
+      package:
+        name: git
+        state: present
 
-  - name: Installing Docker
-    package:
+    - name: Installing Amazon SSM Agent
+      shell: sudo apt-get install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
+      register: ssm_install_output
+      ignore_errors: true
+      changed_when: "'Complete!' in ssm_install_output.stdout"
+
+    - name: Install CloudWatch Agent
+      shell: |
+        sudo apt-get install -y https://s3.amazonaws.com/amazoncloudwatch-agent/amazon_linux/amd64/latest/amazon-cloudwatch-agent.deb &&
+        sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -m ec2 -a start &&
+        sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -m ec2 -a status
+      register: cw_install_output
+      changed_when: "'Complete!' in cw_install_output.stdout"
+
+    - name: Installing Amazon Inspector
+      shell: |
+        curl -O https://inspector-agent.amazonaws.com/linux/latest/install &&
+        sudo bash install
+      register: inspector_install_output
+      ignore_errors: true
+      changed_when: "'Complete!' in inspector_install_output.stdout"
+
+    - name: Installing Docker
+      package:
         name: docker.io
         state: present
