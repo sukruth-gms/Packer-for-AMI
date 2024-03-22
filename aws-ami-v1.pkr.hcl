@@ -39,10 +39,6 @@ build {
   destination = "/tmp/provisioner.sh"
   }
 
-  # provisioner "ansible" {
-   # playbook_file = "provisioner-ansible.yaml"
-  #}
-
   provisioner "shell" {
     inline = [ "ls -la /tmp"]
   }
