@@ -9,18 +9,23 @@
         state: present
 
     - name: Installing Amazon SSM Agent
-      shell: sudo apt install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
+      package:
+        name: "https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm"
+        state: present
       register: ssm_install_output
       ignore_errors: true
       changed_when: "'Complete!' in ssm_install_output.stdout"
 
     - name: Install CloudWatch Agent
-      shell: |
-        sudo apt install -y https://s3.amazonaws.com/amazoncloudwatch-agent/amazon_linux/amd64/latest/amazon-cloudwatch-agent.deb &&
-        sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -m ec2 -a start &&
-        sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -m ec2 -a status
-      register: cw_install_output
-      changed_when: "'Complete!' in cw_install_output.stdout"
+      package:
+        name: "https://s3.amazonaws.com/amazoncloudwatch-agent/amazon_linux/amd64/latest/amazon-cloudwatch-agent.deb"
+        state: present
+
+    - name: Start and enable CloudWatch Agent
+      service:
+        name: amazon-cloudwatch-agent
+        state: started
+        enabled: yes
 
     - name: Installing Amazon Inspector
       shell: |
