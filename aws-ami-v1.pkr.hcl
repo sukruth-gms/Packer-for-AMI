@@ -35,7 +35,7 @@ build {
   ]
 
   provisioner "ansible" {
-    playbook_file = "provisioner-ansible.yml"
+    playbook_file = "provisioner-ansible.yaml"
   }
 
   provisioner "shell" {
@@ -47,6 +47,6 @@ build {
   }
   
   provisioner "shell" {
-    inline = [ "cat /tmp/provisioner-ansible.yml"]
+    inline = [ "cat /tmp/provisioner-ansible.yaml"]
   }
 }
