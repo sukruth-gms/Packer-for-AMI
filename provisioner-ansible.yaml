@@ -26,18 +26,18 @@
       yum:
         name: "/tmp/amazon-cloudwatch-agent.deb"
         state: present
-      when: cw_install_output|success
+      when: not cw_download_output.failed
 
     - name: Show CloudWatch installation output
       debug:
-        var: cw_install_output
+        var: cw_download_output
 
     - name: Start and enable CloudWatch Agent
       service:
         name: amazon-cloudwatch-agent
         state: started
         enabled: yes
-      when: cw_install_output|success
+      when: not cw_download_output.failed
 
     - name: Installing Amazon Inspector
       shell: |
