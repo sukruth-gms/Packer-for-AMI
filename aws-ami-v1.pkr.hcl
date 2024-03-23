@@ -16,7 +16,7 @@ packer {
 
 # which ami to use as the base and where to save it
 source "amazon-ebs" "amazon-linux" {
-  region          = "us-east1"
+  region          = "us-east-1"
   ami_name        = "ami-version-1.0.1-{{timestamp}}"
   instance_type   = "t2.micro"
   source_ami      = "ami-0d6294dcaac5546e4"
