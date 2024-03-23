@@ -34,7 +34,7 @@ build {
     "source.amazon-ebs.amazon-linux"
   ]
   
-  provisioner "ansible {
+  provisioner "ansible" {
   source = "provisioner-ansible.yaml"
   destination = "/tmp/provisioner-ansible.yaml"
   }
