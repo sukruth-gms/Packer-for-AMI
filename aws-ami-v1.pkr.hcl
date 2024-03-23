@@ -23,7 +23,7 @@ source "amazon-ebs" "amazon-linux" {
   ssh_username    = "ec2-user"
   #ami_users       = ["AWS Account ID"]
   ami_regions     = [
-                      "ap-southeast-2"
+                      "us-east-1"
                     ]
 }
 # what to install, configure and file to copy/execute
@@ -34,9 +34,9 @@ build {
     "source.amazon-ebs.amazon-linux"
   ]
   
-  provisioner "file" {
-  source = "provisioner.sh"
-  destination = "/tmp/provisioner.sh"
+  provisioner "ansible {
+  source = "provisioner-ansible.yaml"
+  destination = "/tmp/provisioner-ansible.yaml"
   }
 
   provisioner "shell" {
@@ -48,6 +48,6 @@ build {
   }
   
   provisioner "shell" {
-    inline = [ "cat /tmp/provisioner.sh"]
+    inline = [ "cat /tmp/provisioner-ansible.yaml"]
   }
 }
