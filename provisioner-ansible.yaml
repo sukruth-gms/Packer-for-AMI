@@ -1,58 +1,47 @@
 ---
-- name: Installing the provisioner required
+- name: This playbook is used to install the packages
   hosts: all
-  become: yes
+  become: true
+
   tasks:
-    - name: Installing Git
-      package:
-        name: git
-        state: present
-
-    - name: Installing Amazon SSM Agent
-      shell: sudo yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
-      register: ssm_install_output
-      ignore_errors: true
-      changed_when: "'Complete!' in ssm_install_output.stdout"
-
-    - name: Download CloudWatch Agent Ubuntu package
-      get_url:
-        url: "https://amazoncloudwatch-agent.s3.amazonaws.com/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb"
-        dest: "/tmp/amazon-cloudwatch-agent.deb"
-        mode: '0644'
-      register: cw_download_output
-      ignore_errors: true
-
-    - name: Fail if CloudWatch Agent package download failed
-      fail:
-        msg: "Failed to download CloudWatch Agent package"
-      when: cw_download_output|failed
-
-    - name: Install CloudWatch Agent package
+    - name: Update the Packages
       yum:
-        name: "/tmp/amazon-cloudwatch-agent.deb"
-        state: present
-      when: cw_download_output|success and cw_download_output.stat.exists
+        name: '*'
+        state: latest
 
-    - name: Show CloudWatch installation output
-      debug:
-        var: cw_download_output
+    - name: Install required packages
+      yum:
+        name:
+          - yum-utils
+          - device-mapper-persistent-data
+          - lvm2
+        state: latest
 
-    - name: Start and enable CloudWatch Agent
-      service:
-        name: amazon-cloudwatch-agent
-        state: started
-        enabled: yes
-      when: cw_download_output|success and cw_download_output.stat.exists
-
-    - name: Installing Amazon Inspector
-      shell: |
-        curl -O https://inspector-agent.amazonaws.com/linux/latest/install &&
-        sudo bash install
-      register: inspector_install_output
-      ignore_errors: true
-      changed_when: "'Complete!' in inspector_install_output.stdout"
-
-    - name: Installing Docker
-      package:
+    - name: Install docker
+      yum:
         name: docker
+        update_cache: yes
+        state: latest
+
+    - name: Install Git
+      yum:
+        name: git
+        state: latest
+
+    - name: Install SSM
+      yum:
+       name: https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
+       state: present
+      
+    - name: Install cloudwatch agent
+      yum:
+        name: https://s3.amazonaws.com/amazoncloudwatch-agent/amazon_linux/amd64/latest/amazon-cloudwatch-agent.rpm
         state: present
+
+    - name: Download AWS Inspector agent installer
+      get_url:
+        url: "https://inspector-agent.amazonaws.com/linux/latest/install"
+        dest: /tmp/aws_inspector_agent_installer
+
+    - name: Install AWS Inspector agent installer
+      shell: sudo bash /tmp/aws_inspector_agent_installer
