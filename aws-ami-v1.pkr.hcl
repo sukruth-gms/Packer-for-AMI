@@ -34,8 +34,13 @@ build {
     "source.amazon-ebs.amazon-linux"
   ]
   
-  provisioner "ansible" {
-  playbook_file = "provisioner-ansible.yaml"
+  provisioner "file" {
+  source = "provisioner.sh"
+  destination = "/tmp/provisioner.sh"
+  }
+
+  provisioner "shell" {
+    inline = ["chmod a+x /tmp/provisioner.sh"]
   }
 
   provisioner "shell" {
@@ -47,6 +52,10 @@ build {
   }
   
   provisioner "shell" {
-    inline = [ "cat /tmp/provisioner-ansible.yaml"]
+    inline = [ "cat /tmp/provisioner.sh"]
+  }
+
+  provisioner "shell" {
+    inline = ["/bin/bash -x /tmp/provisioner.sh"]
   }
 }
