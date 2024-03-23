@@ -28,10 +28,6 @@
         name: git
         state: latest
 
-    - name: Import GPG public key for Amazon SSM agent
-      shell: rpm --import https://amazon-ssm-agent.rpm-key
-      ignore_errors: yes
-
     - name: Install SSM
       yum:
         name: https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
