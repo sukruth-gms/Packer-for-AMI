@@ -35,8 +35,7 @@ build {
   ]
   
   provisioner "ansible" {
-  source = "provisioner-ansible.yaml"
-  destination = "/tmp/provisioner-ansible.yaml"
+  playbook_file = provisioner-ansible.yaml
   }
 
   provisioner "shell" {
